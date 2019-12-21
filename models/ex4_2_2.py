@@ -66,7 +66,7 @@ def build(inputs, num_out, atoms):
                                      kernel_initializer=kernel_initializer,
                                      kernel_regularizer=kernel_regularizer)(backbone)
 
-    pri_caps = keras.layers.BatchNormalization(axis=[1, 2])(pri_caps)
+    pri_caps = keras.layers.BatchNormalization()(pri_caps)
 
     poses, probs = multi_caps_layer(pri_caps, [32, 16, num_out], log)
     # poses, probs = multi_caps_layer(pri_caps, [num_out], log)
@@ -81,7 +81,7 @@ def multi_caps_layer(inputs, out_caps, log):
         prediction_caps = layers.CapsuleTransformDense(num_out=out_num, matrix=True, out_atom=0,
                                                        share_weights=False,
                                                        regularizer=kernel_regularizer)(poses)
-        prediction_caps = keras.layers.BatchNormalization(axis=[1, 2, 3])(prediction_caps)
+        prediction_caps = keras.layers.BatchNormalization()(prediction_caps)
         log.add_hist('prediction_caps{}'.format(i+1), prediction_caps)
         prediction_caps = layers.Activation('norm')(prediction_caps)
         poses, probs = layers.LastFMPool(axis=-3, activation='accumulate',
