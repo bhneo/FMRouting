@@ -52,7 +52,7 @@ def build_model(shape, num_out, params):
 def build(inputs, num_out, atoms):
     log = utils.TensorLog()
     backbone = res_blocks.build_resnet_backbone(inputs=inputs,
-                                                layer_num=0, repetitions=[5, 5, 5],
+                                                layer_num=0, repetitions=[8, 8, 8],
                                                 start_filters=16, arch='cifar',
                                                 use_bias=False,
                                                 kernel_initializer=kernel_initializer,

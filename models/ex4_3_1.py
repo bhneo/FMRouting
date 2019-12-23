@@ -81,8 +81,8 @@ def build_model(shape, num_out, params):
 
     model = keras.Model(inputs=(inputs, labels), outputs=(prob, recons_img), name=model_name)
     model.compile(optimizer=optimizer,
-                  loss=losses.MarginLoss(False, 0.9, 0.1, 0.5),
-                  # loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                  # loss=losses.MarginLoss(False, 0.9, 0.1, 0.5),
+                  loss=keras.losses.CategoricalCrossentropy(from_logits=False),
                   metrics=[])
     model.summary()
     # lr_scheduler = keras.callbacks.LearningRateScheduler(schedule=lr_scheduler)
@@ -112,7 +112,7 @@ def build_encoder(inputs, num_out, atoms, iter_num, pool, log):
                                      kernel_initializer=kernel_initializer,
                                      kernel_regularizer=kernel_regularizer)(backbone)
 
-    pri_caps = keras.layers.BatchNormalization(axis=[1, 2])(pri_caps)
+    pri_caps = keras.layers.BatchNormalization()(pri_caps)
 
     poses, probs = multi_caps_layer(pri_caps, [num_out], pool, iter_num, log)
 
@@ -126,7 +126,7 @@ def multi_caps_layer(inputs, out_caps, pool, iter_num, log):
         prediction_caps = layers.CapsuleTransformDense(num_out=out_num, matrix=True, out_atom=0,
                                                        share_weights=False,
                                                        regularizer=kernel_regularizer)(poses)
-        prediction_caps = keras.layers.BatchNormalization(axis=[1, 2, 3])(prediction_caps)
+        prediction_caps = keras.layers.BatchNormalization()(prediction_caps)
         log.add_hist('prediction_caps{}'.format(i+1), prediction_caps)
         if pool == 'dynamic':
             poses, probs = layers.DynamicRouting(num_routing=iter_num,
@@ -138,8 +138,8 @@ def multi_caps_layer(inputs, out_caps, pool, iter_num, log):
             poses, probs = layers.EMRouting(num_routing=iter_num)((prediction_caps, probs))
         elif pool == 'FM':
             prediction_caps = layers.Activation('norm')(prediction_caps)
-            poses, probs = layers.LastFMPool(axis=-3, activation='accumulate',
-                                             shrink=True, stable=False, regularize=True,
+            poses, probs = layers.LastFMPool(axis=-3, activation='squash',
+                                             shrink=False, stable=False, regularize=True,
                                              norm_pose=True if i==len(out_caps)-1 else False,
                                              log=None)(prediction_caps)
 

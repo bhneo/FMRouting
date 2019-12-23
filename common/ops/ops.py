@@ -37,7 +37,7 @@ def accumulate(inputs, axis=-1, shrink='exp', stable=False, norm_pose=True, name
             # norm = tf.exp(norm) / (1+tf.exp(norm))
             norm = 1 - 1/tf.exp(norm)
         elif shrink == 'softmax':
-            norm = tf.nn.softmax(norm, axis)
+            norm = tf.nn.softmax(norm, -2)
         if norm_pose:
             inputs, _ = vector_norm(inputs, axis=axis)
         return inputs, norm

@@ -43,7 +43,7 @@ def get_difference(labels, predictions, threshold):
     return accuracy_both, accuracy_part
 
 
-def get_train_step(model, loss, acc_traditional, acc_threshold):
+def get_train_step(model):
     @tf.function
     def train_step(images, labels, image1, image2, label1, label2):
         with tf.GradientTape() as tape:
@@ -54,27 +54,19 @@ def get_train_step(model, loss, acc_traditional, acc_threshold):
 
         gradients = tape.gradient(total_loss, model.trainable_variables)
         model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+        return pred_loss, predictions
 
-        # Update the metrics
-        loss.update_state(pred_loss)
-        acc1, acc2 = get_difference(labels, predictions, params.recons.threshold)
-        acc_traditional.update_state(acc1)
-        acc_threshold.update_state(acc2)
     return train_step
 
 
-def get_test_step(model, loss, acc_traditional, acc_threshold):
+def get_test_step(model):
     @tf.function
     def test_step(images, labels, image1, image2, label1, label2):
         predictions, recons_img1, recons_img2 = model((images, image1, image2, label1, label2))
         extra_loss = get_extra_losses(model)
         pred_loss = model.loss(labels, predictions)
 
-        # Update the metrics
-        loss.update_state(pred_loss)
-        acc1, acc2 = get_difference(labels, predictions, params.recons.threshold)
-        acc_traditional.update_state(acc1)
-        acc_threshold.update_state(acc2)
+        return pred_loss, predictions
     return test_step
 
 
@@ -142,15 +134,12 @@ def train(model, model_log, manager, init_epoch, train_set, test_set):
     with train_writer.as_default():
         summary_ops_v2.graph(K.get_graph(), step=0)
 
-    train_loss = tf.keras.metrics.Mean(name='train_loss')
-    test_loss = tf.keras.metrics.Mean(name='test_loss')
-    train_acc1 = tf.keras.metrics.Mean(name='train_acc1')
-    test_acc1 = tf.keras.metrics.Mean(name='test_acc1')
-    train_acc2 = tf.keras.metrics.Mean(name='train_acc2')
-    test_acc2 = tf.keras.metrics.Mean(name='test_acc2')
+    loss = tf.keras.metrics.Mean(name='loss')
+    acc_both = tf.keras.metrics.Mean(name='acc_both')
+    acc_part = tf.keras.metrics.Mean(name='acc_part')
 
-    train_step = get_train_step(model, train_loss, train_acc1, train_acc2)
-    test_step = get_test_step(model, test_loss, test_acc1, test_acc2)
+    train_step = get_train_step(model)
+    test_step = get_test_step(model)
     train_log_step = get_log_step(model_log, train_writer)
     test_log_step = get_log_step(model_log, test_writer)
 
@@ -158,53 +147,60 @@ def train(model, model_log, manager, init_epoch, train_set, test_set):
     for epoch in range(init_epoch, params.training.epochs):
         do_callbacks('on_epoch_begin', model.callbacks, epoch=epoch)
         # Reset the metrics
-        train_loss.reset_states()
-        test_loss.reset_states()
-        train_acc1.reset_states()
-        test_acc1.reset_states()
-        train_acc2.reset_states()
-        test_acc2.reset_states()
+        loss.reset_states()
+        acc_both.reset_states()
+        acc_part.reset_states()
 
         tf.keras.backend.set_learning_phase(1)
         for batch, features in enumerate(train_set):
             images, labels, image1, label1, image2, label2 = parse_feature(features)
             do_callbacks('on_batch_begin', model.callbacks, batch=batch)
-            train_step(images, labels, image1, image2, label1, label2)
+            pred_loss, predictions = train_step(images, labels, image1, image2, label1, label2)
+            # Update the metrics
+            loss.update_state(pred_loss)
+            acc1, acc2 = get_difference(labels, predictions, params.recons.threshold)
+            acc_both.update_state(acc1)
+            acc_part.update_state(acc2)
             step = model.optimizer.iterations.numpy()
             if step > params.training.steps:
                 break
             if step % params.training.log_steps == 0 and params.training.log:
                 train_log_step(images, labels, image1, image2, label1, label2, step)
                 # Get the metric results
-                train_loss_result = float(train_loss.result())
-                train_acc1_result = float(train_acc1.result())
-                train_acc2_result = float(train_acc2.result())
+                train_loss_result = float(loss.result())
+                train_acc_both_result = float(acc_both.result())
+                train_acc_part_result = float(acc_part.result())
                 with train_writer.as_default():
                     tf.summary.scalar('loss', train_loss_result, step=step)
-                    tf.summary.scalar('accuracy_both', train_acc1_result, step=step)
-                    tf.summary.scalar('accuracy_part', train_acc2_result, step=step)
-                    train_loss.reset_states()
-                    train_acc1.reset_states()
-                    train_acc2.reset_states()
+                    tf.summary.scalar('accuracy_both', train_acc_both_result, step=step)
+                    tf.summary.scalar('accuracy_part', train_acc_part_result, step=step)
+                    loss.reset_states()
+                    acc_both.reset_states()
+                    acc_part.reset_states()
 
                 tf.keras.backend.set_learning_phase(0)
                 log_batch = np.random.randint(0, 500)
                 for batch, features in enumerate(test_set):
                     images, labels, image1, label1, image2, label2 = parse_feature(features)
-                    test_step(images, labels, image1, image2, label1, label2)
+                    pred_loss, predictions = test_step(images, labels, image1, image2, label1, label2)
+                    # Update the metrics
+                    loss.update_state(pred_loss)
+                    acc1, acc2 = get_difference(labels, predictions, params.recons.threshold)
+                    acc_both.update_state(acc1)
+                    acc_part.update_state(acc2)
                     if batch == log_batch:
                         test_log_step(images, labels, image1, image2, label1, label2, step)
                 # Get the metric results
-                test_loss_result = float(test_loss.result())
-                test_acc1_result = float(test_acc1.result())
-                test_acc2_result = float(test_acc2.result())
+                test_loss_result = float(loss.result())
+                test_acc_both = float(acc_both.result())
+                test_acc_part = float(acc_part.result())
                 with test_writer.as_default():
                     tf.summary.scalar('loss', test_loss_result, step=step)
-                    tf.summary.scalar('accuracy_both', test_acc1_result, step=step)
-                    tf.summary.scalar('accuracy_part', test_acc2_result, step=step)
-                    test_loss.reset_states()
-                    test_acc1.reset_states()
-                    test_acc2.reset_states()
+                    tf.summary.scalar('accuracy_both', test_acc_both, step=step)
+                    tf.summary.scalar('accuracy_part', test_acc_part, step=step)
+                    loss.reset_states()
+                    acc_both.reset_states()
+                    acc_part.reset_states()
 
                 tf.keras.backend.set_learning_phase(1)
 

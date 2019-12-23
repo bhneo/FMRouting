@@ -21,13 +21,13 @@ def run(args):
             idx, 'EM', str(3), args.dataset, str(args.atoms), args.batch_size, str(args.gpu)))
     os.system(
         'python models/ex4_4.py --idx={} --pool={} --iter_num={} --dataset={} --atoms={} --batch={} --gpu={} --epochs=200'.format(
-            idx, 'routing', str(1), args.dataset, str(args.atoms), args.batch_size, str(args.gpu)))
+            idx, 'dynamic', str(1), args.dataset, str(args.atoms), args.batch_size, str(args.gpu)))
     os.system(
         'python models/ex4_4.py --idx={} --pool={} --iter_num={} --dataset={} --atoms={} --batch={} --gpu={} --epochs=200'.format(
-            idx, 'routing', str(2), args.dataset, str(args.atoms), args.batch_size, str(args.gpu)))
+            idx, 'dynamic', str(2), args.dataset, str(args.atoms), args.batch_size, str(args.gpu)))
     os.system(
         'python models/ex4_4.py --idx={} --pool={} --iter_num={} --dataset={} --atoms={} --batch={} --gpu={} --epochs=200'.format(
-            idx, 'routing', str(3), args.dataset, str(args.atoms), args.batch_size, str(args.gpu)))
+            idx, 'dynamic', str(3), args.dataset, str(args.atoms), args.batch_size, str(args.gpu)))
 
 
 if __name__ == "__main__":

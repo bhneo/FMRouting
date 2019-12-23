@@ -36,7 +36,7 @@ def get_difference(labels, predictions):
     return accuracy
 
 
-def get_train_step(model, loss, accuracy):
+def get_train_step(model):
     @tf.function
     def train_step(images, labels):
         with tf.GradientTape() as tape:
@@ -47,25 +47,19 @@ def get_train_step(model, loss, accuracy):
 
         gradients = tape.gradient(total_loss, model.trainable_variables)
         model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+        return pred_loss, predictions
 
-        # Update the metrics
-        loss.update_state(pred_loss)
-        acc = get_difference(labels, predictions)
-        accuracy.update_state(acc)
     return train_step
 
 
-def get_test_step(model, loss, accuracy):
+def get_test_step(model):
     @tf.function
     def test_step(images, labels):
         predictions, recons_img = model((images, labels))
         extra_loss = get_extra_losses(model)
         pred_loss = model.loss(labels, predictions)
 
-        # Update the metrics
-        loss.update_state(pred_loss)
-        acc = get_difference(labels, predictions)
-        accuracy.update_state(acc)
+        return pred_loss, predictions
     return test_step
 
 
@@ -124,16 +118,12 @@ def train(model, model_log, manager, init_epoch, shift_train, shift_test, aff_te
     with train_writer.as_default():
         summary_ops_v2.graph(K.get_graph(), step=0)
 
-    train_loss = tf.keras.metrics.Mean(name='train_loss')
-    test1_loss = tf.keras.metrics.Mean(name='test1_loss')
-    test2_loss = tf.keras.metrics.Mean(name='test2_loss')
-    train_acc = tf.keras.metrics.Mean(name='train_acc')
-    test1_acc = tf.keras.metrics.Mean(name='test1_acc')
-    test2_acc = tf.keras.metrics.Mean(name='test2_acc')
+    loss = tf.keras.metrics.Mean(name='loss')
+    acc = tf.keras.metrics.Mean(name='acc')
 
-    train_step = get_train_step(model, train_loss, train_acc)
-    test1_step = get_test_step(model, test1_loss, test1_acc)
-    test2_step = get_test_step(model, test2_loss, test2_acc)
+    train_step = get_train_step(model)
+    test1_step = get_test_step(model)
+    test2_step = get_test_step(model)
     train_log_step = get_log_step(model_log, train_writer)
     test1_log_step = get_log_step(model_log, test1_writer)
     test2_log_step = get_log_step(model_log, test2_writer)
@@ -142,18 +132,17 @@ def train(model, model_log, manager, init_epoch, shift_train, shift_test, aff_te
     for epoch in range(init_epoch, params.training.epochs):
         do_callbacks('on_epoch_begin', model.callbacks, epoch=epoch)
         # Reset the metrics
-        train_loss.reset_states()
-        test1_loss.reset_states()
-        test2_loss.reset_states()
-        train_acc.reset_states()
-        test1_acc.reset_states()
-        test2_acc.reset_states()
+        loss.reset_states()
+        acc.reset_states()
 
         step = 0
         tf.keras.backend.set_learning_phase(1)
         for batch, (images, labels) in enumerate(shift_train):
             do_callbacks('on_batch_begin', model.callbacks, batch=batch)
-            train_step(images, labels)
+            pred_loss, prediction = train_step(images, labels)
+            loss.update_state(pred_loss)
+            acc.update_state(get_difference(labels, prediction))
+
             step = model.optimizer.iterations.numpy()
             if step > params.training.steps:
                 break
@@ -161,44 +150,48 @@ def train(model, model_log, manager, init_epoch, shift_train, shift_test, aff_te
                 tf.keras.backend.set_learning_phase(0)
                 train_log_step(images, labels, step)
                 # Get the metric results
-                train_loss_result = float(train_loss.result())
-                train_acc_result = float(train_acc.result())
+                train_loss_result = float(loss.result())
+                train_acc_result = float(acc.result())
                 with train_writer.as_default():
                     tf.summary.scalar('loss', train_loss_result, step=step)
                     tf.summary.scalar('accuracy', train_acc_result, step=step)
-                    train_loss.reset_states()
-                    train_acc.reset_states()
+                    loss.reset_states()
+                    acc.reset_states()
 
                 if step % (10*params.training.log_steps) == 0:
                     # shift mnist
                     log_batch = np.random.randint(0, 500)
                     for batch, (images, labels) in enumerate(shift_test):
-                        test1_step(images, labels)
+                        pred_loss, prediction = test1_step(images, labels)
+                        loss.update_state(pred_loss)
+                        acc.update_state(get_difference(labels, prediction))
                         if batch == log_batch:
                             test1_log_step(images, labels, step)
                     # Get the metric results
-                    test1_loss_result = float(test1_loss.result())
-                    test1_acc_result = float(test1_acc.result())
+                    test1_loss_result = float(loss.result())
+                    test1_acc_result = float(acc.result())
                     with test1_writer.as_default():
                         tf.summary.scalar('loss', test1_loss_result, step=step)
                         tf.summary.scalar('accuracy', test1_acc_result, step=step)
-                        test1_loss.reset_states()
-                        test1_acc.reset_states()
+                        loss.reset_states()
+                        acc.reset_states()
 
                 # aff mnist
                 log_batch = np.random.randint(0, 500)
                 for batch, (images, labels) in enumerate(aff_test):
-                    test2_step(images, labels)
+                    pred_loss, prediction = test2_step(images, labels)
+                    loss.update_state(pred_loss)
+                    acc.update_state(get_difference(labels, prediction))
                     if batch == log_batch:
                         test2_log_step(images, labels, step)
                 # Get the metric results
-                test2_loss_result = float(test2_loss.result())
-                test2_acc_result = float(test2_acc.result())
+                test2_loss_result = float(loss.result())
+                test2_acc_result = float(acc.result())
                 with test2_writer.as_default():
                     tf.summary.scalar('loss', test2_loss_result, step=step)
                     tf.summary.scalar('accuracy', test2_acc_result, step=step)
-                    test2_loss.reset_states()
-                    test2_acc.reset_states()
+                    loss.reset_states()
+                    acc.reset_states()
 
                 tf.keras.backend.set_learning_phase(1)
 
