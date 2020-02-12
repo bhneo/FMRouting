@@ -2,11 +2,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import tensorflow as tf
 import numpy as np
-
-from tensorflow.python.keras import backend as K
-
+import tensorflow as tf
 
 eps = 1e-10
 

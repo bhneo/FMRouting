@@ -3,22 +3,14 @@ import time
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.python.keras import backend as K
-from tensorflow.python.keras import initializers
-from tensorflow.python.keras import regularizers
-from tensorflow.python.keras import constraints
-from tensorflow.python.keras.layers import Layer
+from tensorflow.keras.layers import Layer
 from tensorflow.python.keras.utils import tf_utils
-from tensorflow.python.ops import array_ops, math_ops, state_ops
-from tensorflow.python.ops import variables as tf_variables
-from tensorflow.python.framework import ops
 
 from common import utils
-from common.ops import transformation
 from common.ops import ops as custom_ops
-from common.ops.em_routing import em_routing, create_routing_map
+from common.ops import transformation
+from common.ops.em_routing import em_routing
 from common.ops.routing import dynamic_routing
-from config import params as cfg
 
 eps = 1e-10
 
@@ -54,7 +46,7 @@ class PrimaryCapsule(Layer):
                  atoms=8,
                  activation='squash',
                  kernel_initializer=keras.initializers.glorot_normal(),
-                 kernel_regularizer=keras.regularizers.l2(1e-4),
+                 kernel_regularizer=None,
                  **kwargs):
         super(PrimaryCapsule, self).__init__(**kwargs)
         self.kernel_size = kernel_size

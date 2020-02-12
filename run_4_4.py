@@ -3,10 +3,7 @@ import argparse
 
 
 def run(args):
-    idx=int(args.gpu)+1
-    # os.system(
-    #     'python models/small_norb.py --idx={} --pool={} --iter_num={} --dataset={} --atoms={} --batch={} --gpu={} --epochs=200'.format(
-    #         idx, args.pool, str(args.iter), args.dataset, str(args.atoms), args.batch_size, str(args.gpu)))
+    idx = int(args.gpu)+1
     os.system(
         'python models/ex4_4.py --idx={} --pool={} --iter_num={} --dataset={} --atoms={} --batch={} --gpu={} --epochs=200'.format(
             idx, 'FM', str(args.iter), args.dataset, str(args.atoms), args.batch_size, str(args.gpu)))

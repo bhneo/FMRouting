@@ -1,6 +1,5 @@
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.python.keras.utils import losses_utils
 
 
 class MarginLoss(keras.losses.Loss):
@@ -9,7 +8,7 @@ class MarginLoss(keras.losses.Loss):
                  upper_margin=0.9,
                  bottom_margin=0.1,
                  down_weight=0.5,
-                 reduction=losses_utils.ReductionV2.AUTO,
+                 reduction=keras.losses.Reduction.AUTO,
                  name=None):
         super(MarginLoss, self).__init__(reduction=reduction, name=name)
         self.sparse = sparse

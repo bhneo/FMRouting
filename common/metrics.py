@@ -1,5 +1,5 @@
-from tensorflow.python.keras.metrics import MeanMetricWrapper
-from tensorflow.python.keras.utils import metrics_utils
+from tensorflow_core.python.keras.metrics import MeanMetricWrapper
+from tensorflow_core.python.keras.utils import metrics_utils
 
 
 class Mean(Reduce):

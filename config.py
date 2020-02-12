@@ -22,7 +22,7 @@ params.training.verbose = True
 params.training.log_steps = 1000
 params.training.idx = 1
 params.training.momentum = 0.9
-params.training.save_frequency = 0
+params.training.save_frequency = 10
 params.training.log = True
 params.training.whiten = 'zca'
 

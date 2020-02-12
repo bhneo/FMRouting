@@ -29,7 +29,7 @@ class Trainer(object):
         model_dir = os.path.join(self.params.logdir, self.model.name)
 
         ckpt = tf.train.Checkpoint(optimizer=self.model.optimizer, net=self.model)
-        manager = tf.train.CheckpointManager(ckpt, model_dir, max_to_keep=3)
+        manager = tf.train.CheckpointManager(ckpt, model_dir, max_to_keep=1)
         ckpt.restore(manager.latest_checkpoint)
         if manager.latest_checkpoint:
             print("Restored from {}".format(manager.latest_checkpoint))
@@ -105,7 +105,7 @@ class Trainer(object):
         print(print_str)
 
     def checkpoint(self, manager, step, frequency):
-        if frequency != 0 and step % frequency == 0:
+        if (frequency != 0 and step % frequency == 0) or frequency == 0:
             save_path = manager.save()
             print("Saved checkpoint for step {}: {}".format(self.model.optimizer.iterations.numpy(), save_path))
 
@@ -144,7 +144,8 @@ class Trainer(object):
         for epoch in range(self.init_epoch, self.params.training.epochs):
             self.train_one_epoch(train_set, train_writer, epoch)
             self.evaluate(test_set, test_writer, epoch)
-            self.checkpoint(self.manager, epoch, self.params.training.save_frequency)
+            self.checkpoint(self.manager, epoch+1, self.params.training.save_frequency)
+        self.checkpoint(self.manager, self.params.training.epochs, 0)
 
 
 def do_callbacks(state, callbacks, epoch=0, batch=0):

@@ -1,6 +1,5 @@
 import os
 
-import matplotlib.pyplot as plt
 import tensorflow as tf
 import tensorflow_datasets as tfds
 import numpy as np
@@ -250,6 +249,7 @@ def view_multi_mnist(img_stand=False):
 
 
 def out_image(images, labels):
+    import matplotlib.pyplot as plt
     plt.figure()
     for i in range(16):
         plt.subplot(4, 4, i+1)

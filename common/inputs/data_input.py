@@ -2,7 +2,6 @@ import os
 import tensorflow_datasets as tfds
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
 
 from common import utils
 
@@ -139,6 +138,7 @@ def view_data(name, path='data', img_stand=False):
 
 
 def out_image(images, labels):
+    import matplotlib.pyplot as plt
     plt.figure()
     for i in range(16):
         plt.subplot(4,4,i+1)

@@ -4,36 +4,75 @@ import argparse
 
 def run(args):
     os.system(
-        'python models/ex4_1.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
-            str(args.idx), args.pool, str(args.iter_num), args.in_norm_fn, 'svhn_cropped', False, False,
-            50, str(args.gpu)
-        ))
-    os.system(
-        'python models/ex4_1.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
-            str(args.idx), args.pool, str(args.iter_num), args.in_norm_fn, 'fashion_mnist', False, False,
-            50, str(args.gpu)
-        ))
-    os.system(
-        'python models/ex4_1.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
-            str(args.idx), args.pool, str(args.iter_num), args.in_norm_fn, 'cifar10', False, False,
-            50, str(args.gpu)
-        ))
-
-    os.system(
-        'python models/ex4_1.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
-            str(args.idx), args.routing, str(args.iter_num), args.in_norm_fn, 'svhn_cropped', False, True,
+        'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+            114, 'dynamic', str(3), args.in_norm_fn, 'cifar10', True, True,
             100, str(args.gpu)
         ))
-    os.system(
-        'python models/ex4_1.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
-            str(args.idx), args.routing, str(args.iter_num), args.in_norm_fn, 'fashion_mnist', False, True,
-            100, str(args.gpu)
-        ))
-    os.system(
-        'python models/ex4_1.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
-            str(args.idx), args.routing, str(args.iter_num), args.in_norm_fn, 'cifar10', True, True,
-            100, str(args.gpu)
-        ))
+    # if args.gpu=='0':
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(3), args.in_norm_fn, 'svhn_cropped', False, False,
+    #             50, str(args.gpu)
+    #         ))
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(3), args.in_norm_fn, 'fashion_mnist', False, False,
+    #             50, str(args.gpu)
+    #         ))
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(3), args.in_norm_fn, 'cifar10', False, False,
+    #             50, str(args.gpu)
+    #         ))
+    #
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(3), args.in_norm_fn, 'svhn_cropped', False, True,
+    #             100, str(args.gpu)
+    #         ))
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(3), args.in_norm_fn, 'fashion_mnist', False, True,
+    #             100, str(args.gpu)
+    #         ))
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(3), args.in_norm_fn, 'cifar10', True, True,
+    #             100, str(args.gpu)
+    #         ))
+    #
+    # if args.gpu=='1':
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(2), args.in_norm_fn, 'svhn_cropped', False, False,
+    #             50, str(args.gpu)
+    #         ))
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(2), args.in_norm_fn, 'fashion_mnist', False, False,
+    #             50, str(args.gpu)
+    #         ))
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(2), args.in_norm_fn, 'cifar10', False, False,
+    #             50, str(args.gpu)
+    #         ))
+    #
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(2), args.in_norm_fn, 'svhn_cropped', False, True,
+    #             100, str(args.gpu)
+    #         ))
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(2), args.in_norm_fn, 'fashion_mnist', False, True,
+    #             100, str(args.gpu)
+    #         ))
+    #     os.system(
+    #         'python models/ex4_1_light.py --idx={} --pool={} --iter_num={} --in_norm_fn={} --dataset={} --flip={} --crop={} --epochs={} --gpu={}'.format(
+    #             str(args.idx), 'dynamic', str(2), args.in_norm_fn, 'cifar10', True, True,
+    #             100, str(args.gpu)
+    #         ))
 
 
 if __name__ == "__main__":
