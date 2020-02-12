@@ -112,7 +112,7 @@ def print_results(model, model_dir, data):
     if manager.latest_checkpoint:
         print("Restored from {}".format(manager.latest_checkpoint))
 
-    train_set, test_set, info = data_input.build_dataset(data, path='../../data', batch_size=128,
+    train_set, test_set, info = data_input.build_dataset(data, path='../data', batch_size=128,
                                                          flip=False, crop=False)
     metric = keras.metrics.SparseCategoricalAccuracy()
     with tf.device('/GPU:0'):
@@ -143,83 +143,55 @@ def print_results(model, model_dir, data):
     print('acc:', metric.result().numpy())
 
 
-def test_inference_cifar10():
-    model_dir = '../../log/cifar10_ori/ori.vectorcaps_fm_routing_iter1_trial1_flip_crop'
+def test_inference_cifar10_FM():
+    model_dir = '../log/cifar10/Ex4_1_FM_squash_trial1_flip_crop'
     inputs = keras.Input((32, 32, 3))
-    pose, prob, _ = build(inputs, 10, 1, 'routing', 'squash')
+    pose, prob, _ = build(inputs, 10, 1, 'FM', 'squash')
+    model = keras.Model(inputs=inputs, outputs=prob)
+
+    print_results(model, model_dir, 'cifar10')
+
+
+def test_inference_cifar10_iter1():
+    model_dir = '../log/cifar10/Ex4_1_dynamic_iter1_squash_trial1_flip_crop'
+    inputs = keras.Input((32, 32, 3))
+    pose, prob, _ = build(inputs, 10, 1, 'dynamic', 'squash')
     model = keras.Model(inputs=inputs, outputs=prob)
 
     print_results(model, model_dir, 'cifar10')
 
 
 def test_inference_cifar10_iter3():
-    model_dir = '../../log/cifar10_ori/ori.vectorcaps_fm_routing_iter3_trial1_flip_crop'
+    model_dir = '../log/cifar10/Ex4_1_dynamic_iter3_squash_trial1_flip_crop'
     inputs = keras.Input((32, 32, 3))
-    pose, prob, _ = build(inputs, 10, 3, 'routing', 'squash')
+    pose, prob, _ = build(inputs, 10, 3, 'dynamic', 'squash')
     model = keras.Model(inputs=inputs, outputs=prob)
 
     print_results(model, model_dir, 'cifar10')
 
 
-def test_inference_cifar10_FM():
-    model_dir = '../../log/cifar10_ori/ori.vectorcaps_fm_FM_trial4_flip_crop'
-    inputs = keras.Input((32, 32, 3))
-    pose, prob, _ = build(inputs, 10, 3, 'FM', 'squash')
-    model = keras.Model(inputs=inputs, outputs=prob)
-
-    print_results(model, model_dir, 'cifar10')
-
-
-def test_inference_fashionmnist():
-    model_dir = '../../log/fashion_mnist/ori.vectorcaps_fm_routing_iter1_trial1'
+def test_inference_fashionmnist_FM():
+    model_dir = '../log/fashion_mnist/Ex4_1_FM_squash_trial1_crop'
     inputs = keras.Input((28, 28, 1))
-    pose, prob, _ = build(inputs, 10, 1, 'routing', 'squash')
+    pose, prob, _ = build(inputs, 10, 1, 'FM', 'squash')
+    model = keras.Model(inputs=inputs, outputs=prob)
+
+    print_results(model, model_dir, 'fashion_mnist')
+
+
+def test_inference_fashionmnist_iter1():
+    model_dir = '../log/fashion_mnist/Ex4_1_dynamic_iter1_squash_trial1_crop'
+    inputs = keras.Input((28, 28, 1))
+    pose, prob, _ = build(inputs, 10, 1, 'dynamic', 'squash')
     model = keras.Model(inputs=inputs, outputs=prob)
 
     print_results(model, model_dir, 'fashion_mnist')
 
 
 def test_inference_fashionmnist_iter3():
-    model_dir = '../../log/fashion_mnist/ori.vectorcaps_fm_routing_iter3_trial4_crop'
+    model_dir = '../log/fashion_mnist/Ex4_1_dynamic_iter3_squash_trial1_crop'
     inputs = keras.Input((28, 28, 1))
-    pose, prob, _ = build(inputs, 10, 3, 'routing', 'squash')
+    pose, prob, _ = build(inputs, 10, 3, 'dynamic', 'squash')
     model = keras.Model(inputs=inputs, outputs=prob)
 
     print_results(model, model_dir, 'fashion_mnist')
-
-
-def test_inference_fashionmnist_FM():
-    model_dir = '../../log/fashion_mnist/ori.vectorcaps_fm_FM_trial5_crop'
-    inputs = keras.Input((28, 28, 1))
-    pose, prob, _ = build(inputs, 10, 3, 'FM', 'squash')
-    model = keras.Model(inputs=inputs, outputs=prob)
-
-    print_results(model, model_dir, 'fashion_mnist')
-
-
-def test_inference_svhn():
-    model_dir = '../../log/svhn_cropped/ori.vectorcaps_fm_routing_iter1_trial1'
-    inputs = keras.Input((32, 32, 3))
-    pose, prob, _ = build(inputs, 10, 1, 'routing', 'squash')
-    model = keras.Model(inputs=inputs, outputs=prob)
-
-    print_results(model, model_dir, 'svhn_cropped')
-
-
-def test_inference_svhn_iter3():
-    model_dir = '../../log/svhn_cropped/ori.vectorcaps_fm_routing_iter3_trial4_crop'
-    inputs = keras.Input((32, 32, 3))
-    pose, prob, _ = build(inputs, 10, 3, 'routing', 'squash')
-    model = keras.Model(inputs=inputs, outputs=prob)
-
-    print_results(model, model_dir, 'svhn_cropped')
-
-
-def test_inference_svhn_FM():
-    model_dir = '../../log/svhn_cropped/ori.vectorcaps_fm_FM_trial5_crop'
-    inputs = keras.Input((32, 32, 3))
-    pose, prob, _ = build(inputs, 10, 3, 'FM', 'squash')
-    model = keras.Model(inputs=inputs, outputs=prob)
-
-    print_results(model, model_dir, 'svhn_cropped')
-
