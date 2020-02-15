@@ -81,7 +81,6 @@ def build_model(shape, num_out, params):
 
     model = keras.Model(inputs=(inputs, labels), outputs=(prob, recons_img), name=model_name)
     model.compile(optimizer=optimizer,
-                  # loss=losses.MarginLoss(False, 0.9, 0.1, 0.5),
                   loss=keras.losses.CategoricalCrossentropy(from_logits=False),
                   metrics=[])
     model.summary()
@@ -145,33 +144,4 @@ def multi_caps_layer(inputs, out_caps, pool, iter_num, log):
 
         log.add_hist('prob{}'.format(i+1), probs)
     return poses, probs
-
-
-# def main():
-#     args, params = config.parse_args()
-#     params.dataset.name = 'affnist'
-#     shift_train, shift_test, info = custom_reader.build_dataset('shift_mnist', batch_size=params.training.batch_size)
-#     _, aff_test, _ = custom_reader.build_dataset('aff_mnist', batch_size=params.training.batch_size)
-#
-#     model, model_log, encoder, decoder = build_model(shape=info.features['image'].shape,
-#                                                      num_out=info.features['label'].num_classes,
-#                                                      params=params)
-#
-#     trainer = train.Trainer(model, params, info, tensor_log)
-#     if args.train:
-#         trainer.fit(shift_train, aff_test)
-#     else:
-#         trainer.evaluate(aff_test)
-#
-#
-# if __name__ == "__main__":
-#     main()
-
-
-def test_build():
-    tf.keras.backend.set_learning_phase(1)
-    inputs = tf.random.normal([64, 40, 40, 1])
-    labels = tf.random.uniform([64, ], 0, 9, tf.int32)
-    labels = tf.one_hot(labels, 10)
-    outputs = build_encoder(inputs, 10, 16, 3, 'FM', utils.TensorLog())
 

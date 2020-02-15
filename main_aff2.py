@@ -1,7 +1,7 @@
 import os
 from importlib import import_module
-from tensorflow_core.python.ops import summary_ops_v2
-from tensorflow_core.python.keras import backend as K
+from tensorflow.python.ops import summary_ops_v2
+from tensorflow.python.keras import backend as K
 import tensorflow as tf
 import numpy as np
 from common.inputs import custom_reader

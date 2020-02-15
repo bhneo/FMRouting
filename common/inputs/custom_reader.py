@@ -1,7 +1,6 @@
 import os
-
-import tensorflow as tf
 import tensorflow_datasets as tfds
+import tensorflow as tf
 import numpy as np
 
 from common.inputs.data_input import DataInfo

@@ -3,18 +3,90 @@ import argparse
 
 
 def run(args):
-    os.system(
-        'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
-            str(args.idx), 20, args.pool, args.dataset))
-    os.system(
-        'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
-            str(args.idx), 32, args.pool, args.dataset))
-    os.system(
-        'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
-            str(args.idx), 44, args.pool, args.dataset))
-    os.system(
-        'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
-            str(args.idx), 56, args.pool, args.dataset))
+    if args.gpu == '0':
+        os.system(
+            'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+                str(1), 20, 'average', args.dataset))
+        os.system(
+            'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+                str(1), 32, 'average', args.dataset))
+        os.system(
+            'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+                str(1), 44, 'average', args.dataset))
+        os.system(
+            'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+                str(1), 56, 'average', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(1), 110, 'average', args.dataset))
+
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(2), 20, 'average', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(2), 32, 'average', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(2), 44, 'average', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(2), 56, 'average', args.dataset))
+        #
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(3), 20, 'average', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(3), 32, 'average', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(3), 44, 'average', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(3), 56, 'average', args.dataset))
+    else:
+        os.system(
+            'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+                str(1), 20, 'FM', args.dataset))
+        os.system(
+            'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+                str(1), 32, 'FM', args.dataset))
+        os.system(
+            'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+                str(1), 44, 'FM', args.dataset))
+        os.system(
+            'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+                str(1), 56, 'FM', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(1), 110, 'FM', args.dataset))
+
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(2), 20, 'FM', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(2), 32, 'FM', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(2), 44, 'FM', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(2), 56, 'FM', args.dataset))
+        #
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(3), 20, 'FM', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(3), 32, 'FM', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(3), 44, 'FM', args.dataset))
+        # os.system(
+        #     'python models/ex4_2_1.py --idx={} --layer_num={} --pool={} --dataset={} --flip=True --crop=True'.format(
+        #         str(3), 56, 'FM', args.dataset))
 
 
 if __name__ == "__main__":

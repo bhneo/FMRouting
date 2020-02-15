@@ -48,13 +48,9 @@ def build_model(shape, num_out, params):
                                                                   decay_steps=20000,
                                                                   decay_rate=0.5), momentum=0.9)  # 3e-3 20000 0.96
     model.compile(optimizer=optimizer,
-                  # loss=losses.MarginLoss(True, 0.9, 0.1, 0.5),
                   loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                   metrics=[])
     model.summary()
-    # lr_scheduler = keras.callbacks.LearningRateScheduler(schedule=lr_scheduler)
-    # lr_scheduler.set_model(model)
-    # callbacks = [lr_scheduler]
     model.callbacks = []
     return model, tensor_log
 

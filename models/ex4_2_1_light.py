@@ -27,7 +27,7 @@ def build_model_name(params):
 def build_model(shape, num_out, params):
     inputs = keras.Input(shape=shape)
     model_name = build_model_name(params)
-    pose, prob, tensor_log = build(inputs, num_out, params.model.layer_num, params.model.in_norm_fn, params.model.pool)
+    pose, prob, tensor_log = build(inputs, num_out, params.model.layer_num, params.model.pool)
     model = keras.Model(inputs=inputs, outputs=prob, name=model_name)
     log_model = keras.Model(inputs=inputs, outputs=tensor_log.get_outputs(), name=model_name + '_log')
     tensor_log.set_model(log_model)
@@ -42,8 +42,32 @@ def build_model(shape, num_out, params):
     return model, tensor_log
 
 
-def build(inputs, num_out, layer_num, in_norm_fn, pool):
+def build(inputs, num_out, layer_num, pool):
     log = utils.TensorLog()
+    conv1 = keras.layers.Conv2D(filters=64, kernel_size=5,
+                                strides=1, padding='same', use_bias=True,
+                                kernel_initializer=kernel_initializer,
+                                kernel_regularizer=kernel_regularizer,
+                                name='conv1')(inputs)
+
+    conv2 = keras.layers.Conv2D(filters=64, kernel_size=5,
+                                strides=1, padding='same', use_bias=True,
+                                kernel_initializer=kernel_initializer,
+                                kernel_regularizer=kernel_regularizer,
+                                name='conv1')(conv1)
+
+    conv3 = keras.layers.Conv2D(filters=64, kernel_size=5,
+                                strides=2, padding='same', use_bias=True,
+                                kernel_initializer=kernel_initializer,
+                                kernel_regularizer=kernel_regularizer,
+                                name='conv1')(conv2)
+
+    conv4 = keras.layers.Conv2D(filters=64, kernel_size=5,
+                                strides=2, padding='same', use_bias=True,
+                                kernel_initializer=kernel_initializer,
+                                kernel_regularizer=kernel_regularizer,
+                                name='conv1')(conv3)
+
     backbone = res_blocks.build_resnet_backbone(inputs=inputs, layer_num=layer_num,
                                                 start_filters=16, arch='cifar',
                                                 use_bias=False,
@@ -66,7 +90,7 @@ def build(inputs, num_out, layer_num, in_norm_fn, pool):
     elif pool == 'average':
         pose = layers.LastAveragePooling(axis=-3)(capsules)
     else:
-        pose = layers.LastFMPool(axis=-3, activation='None', log=log, regularize=True)(capsules)
+        pose = layers.LastFMPool(axis=-3, activation='None', log=log)(capsules)
 
     pose = keras.layers.Reshape([backbone_shape[3]])(pose)
     flatten = keras.layers.Flatten()(pose)
