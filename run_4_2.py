@@ -5,15 +5,14 @@ import argparse
 def run(args):
     # resnet-cifar10 FM caps
     os.system(
-        'python models/ex4_2_2.py --idx={} --pool=FM --dataset={} --atoms={} --gpu={} --flip={} --crop={} --epoch=163'.format(
+        'python models/ex4_2.py --idx={} --pool=FM --dataset={} --atoms={} --gpu={} --flip={} --crop={} --epoch=163'.format(
             str(args.idx), 'fashion_mnist', str(args.atoms), str(args.gpu), args.flip, args.crop))
     os.system(
-        'python models/ex4_2_2.py --idx={} --pool=FM --dataset={} --atoms={} --gpu={} --flip={} --crop={} --epoch=163'.format(
+        'python models/ex4_2.py --idx={} --pool=FM --dataset={} --atoms={} --gpu={} --flip={} --crop={} --epoch=163'.format(
             str(args.idx), 'cifar10', str(args.atoms), str(args.gpu), args.flip, args.crop))
     os.system(
-        'python models/ex4_2_2.py --idx={} --pool=FM --dataset={} --atoms={} --gpu={} --flip={} --crop={} --epoch=163'.format(
+        'python models/ex4_2.py --idx={} --pool=FM --dataset={} --atoms={} --gpu={} --flip={} --crop={} --epoch=163'.format(
             str(args.idx), 'svhn_cropped', str(args.atoms), str(args.gpu), False, args.crop))
-
 
 
 if __name__ == "__main__":
